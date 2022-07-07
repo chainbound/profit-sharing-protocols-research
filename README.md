@@ -85,6 +85,7 @@ query "susd_fee_mints_optimism" {
 * Problem: there is no global state variable keeping track of the amount of staked SNX or collateral ratio,
 it's all individual. The SNX you stake doesn't even leave your wallet, but you get minted a debt token (SDS)
 representing your debt in USD.
+* To get all the addresses that ever staked SNX, we can filter all the `Mint` events on SDS.
 
 ### 3. Getting claimed SNX
 
