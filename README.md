@@ -65,7 +65,7 @@ query "susd_fee_mints_optimism" {
   // the fee address. This is how we filter for those events.
   filter = [
     from == "0x0000000000000000000000000000000000000000",
-    to == "0xfeefeefeefeefeefeefeefeefeefeefeefeefeef"
+    to == "0xfeEFEEfeefEeFeefEEFEEfEeFeefEEFeeFEEFEeF"
   ]
 
   save {
@@ -81,11 +81,13 @@ query "susd_fee_mints_optimism" {
 
 ### 2. Getting staked SNX over time
 * We need to get staked SNX (total collateral value) over time.
-* [Issuer](https://etherscan.io/address/0xc9380E4A1570cce7b99eeD107aC42C754c4CE3Bf#readContract) `allNetworksDebtInfo` might be the method (sharesSupply)
 * Problem: there is no global state variable keeping track of the amount of staked SNX or collateral ratio,
 it's all individual. The SNX you stake doesn't even leave your wallet, but you get minted a debt token (SDS)
 representing your debt in USD.
 * To get all the addresses that ever staked SNX, we can filter all the `Mint` events on SDS.
+* We can use these addresses to get the SNX staked. Because it's not feasible to do it for all the addresses,
+we can filter out the top holders, look at all their claims over time and get an idea of the total APY.
+* We can get the top SDS holders, get their share of the total staked SNX by looking at their collateral and collateral ratios, and then calculate the percentage of total fees they would make.
 
 ### 3. Getting claimed SNX
 
@@ -128,3 +130,6 @@ query "gmx_staked_avax" {
 }
 
 ```
+* The rest of the stats can be downloaded from https://stats.gmx.io
+
+## Maple
