@@ -133,3 +133,5 @@ query "gmx_staked_avax" {
 * The rest of the stats can be downloaded from https://stats.gmx.io
 
 ## Maple
+
+### 1. Getting total amount of MPL staked over time
