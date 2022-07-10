@@ -1,7 +1,7 @@
 // Last 180 days
-start_time = format_date("02-01-2006 15:04", "01-01-2022 00:00")
-end_time = format_date("02-01-2006 15:04", "07-07-2022 00:00")
-time_interval = 3600 * 12
+// start_time = format_date("02-01-2006 15:04", "01-01-2022 00:00")
+// end_time = format_date("02-01-2006 15:04", "07-07-2022 00:00")
+// time_interval = 3600 * 12
 
 variables = {
   // The top debt holders
@@ -113,28 +113,71 @@ variables = {
 //   }
 // }
 
-query "gmx_staked_avax" {
-  chain = "avax"
+// query "gmx_staked_avax" {
+//   chain = "avax"
+
+//   contract {
+//     abi = "erc20.abi.json"
+//     // address = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a" # arbi
+//     address = "0x62edc0692BD897D2295872a9FFCac5425011c661" # avax
+
+//     method "balanceOf" {
+//       inputs = {
+//         // _owner = "0x908C4D94D34924765f1eDc22A1DD098397c59dD4" # arbi
+//         _owner = "0x2bD10f8E93B3669b6d42E74eEedC65dd1B0a1342" # avax
+//       }
+
+//       outputs = ["balance"]
+//     }
+//   }
+
+//   save {
+//     time = timestamp
+//     block = blocknumber
+
+//     balance = parse_decimals(balance, 18)
+//   }
+// }
+
+// MAPLE
+// ======================================
+start_time = format_date("02-01-2006 15:04", "01-04-2022 00:00")
+end_time = format_date("02-01-2006 15:04", "07-07-2022 00:00")
+time_interval = 3600
+
+query "total_mpl_staked" {
+  chain = "ethereum"
 
   contract {
-    abi = "erc20.abi.json"
-    // address = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a" # arbi
-    address = "0x62edc0692BD897D2295872a9FFCac5425011c661" # avax
+    address = "0x4937A209D4cDbD3ecD48857277cfd4dA4D82914c"
+    abi = "xmpl.abi.json"
 
-    method "balanceOf" {
-      inputs = {
-        // _owner = "0x908C4D94D34924765f1eDc22A1DD098397c59dD4" # arbi
-        _owner = "0x2bD10f8E93B3669b6d42E74eEedC65dd1B0a1342" # avax
-      }
 
-      outputs = ["balance"]
+    method "totalAssets" {
+      outputs = ["totalManagedAssets_"]
+    }
+
+    method "totalSupply" {
+      outputs = ["total_xmpl"]
+    }
+
+    transform {
+      mpl_staked = parse_decimals(totalManagedAssets_, 18)
+      xmpl_supply = parse_decimals(total_xmpl, 18)
     }
   }
+
+  // filter = [
+  //   xmpl_supply != 0,
+  //   mpl_staked != 0
+  // ]
 
   save {
     time = timestamp
     block = blocknumber
 
-    balance = parse_decimals(balance, 18)
+    mpl_staked = mpl_staked
+    xmpl_supply = xmpl_supply
+    rate = xmpl_supply == 0 ? 0 : mpl_staked / xmpl_supply
   }
 }
